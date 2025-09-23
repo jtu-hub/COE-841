@@ -1,3 +1,3 @@
-from .velocityControl import VelocityControl, generateRandomVelocityTrajectory, generateConstantVelocityTrajectory
+from .velocityControl import VelocityControl, generateRandomVelocityTrajectory, generateConstantVelocityTrajectory, Odometry
 
-__all__ = ['VelocityControl', 'generateRandomVelocityTrajectory', 'generateConstantVelocityTrajectory']
+__all__ = ['VelocityControl', 'generateRandomVelocityTrajectory', 'generateConstantVelocityTrajectory', 'Odometry']

@@ -100,7 +100,7 @@ class EkfSlam(KalmanFilter):
 
         self.sigma = g_mat @ self.sigma @ g_mat.T + f_mat.T @ self.r_mat @ f_mat
 
-    def predictKnownCorrespondence(self, detected_landmarks: list[DetectedFeature], correspondences: list[int]):
+    def predictKnownCorrespondence(self, detected_landmarks: list[DetectedFeature], correspondences: list[int], eps: float=1e-3):
         for z_i, c_i in zip(detected_landmarks, correspondences):
             mu_x = self.mu_x
             mu_lm = self.mu_lm(c_i)
@@ -116,7 +116,7 @@ class EkfSlam(KalmanFilter):
                 dx = mu_lm[0,0] - mu_x.x
                 dy = mu_lm[1,0] - mu_x.y
 
-            q = max(1e-9, dx ** 2 + dy ** 2)
+            q = max(eps, dx ** 2 + dy ** 2)
             r = np.sqrt(q)
             phi = Angle.arctan2(dy, dx) - mu_x.th
 

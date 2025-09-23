@@ -33,6 +33,21 @@ class Pose(StateVariable):
   def dim():
     return 3
   
+  def copy(self):
+      return Pose(self.x, self.y, self.th)
+  
+  @staticmethod
+  def random(roi: tuple[tuple[float, float], tuple[float, float]]):
+    x_roi = roi[0]
+    y_roi = roi[1]
+
+    x = np.random.uniform(x_roi[0], x_roi[1])
+    y = np.random.uniform(y_roi[0], y_roi[1])
+    th = Angle.from_radians(np.random.uniform(0, 2 * np.pi))
+
+    return Pose(x, y, th)
+      
+  
   def __add__(self, other):
         x = self.x + other.x
         y = self.y + other.y
