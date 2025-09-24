@@ -46,6 +46,14 @@ class Pose(StateVariable):
     th = Angle.from_radians(np.random.uniform(0, 2 * np.pi))
 
     return Pose(x, y, th)
+  
+  @staticmethod
+  def noisy(pose: 'Pose', std_noise_rot: float = np.pi / 4, std_noise_trans: float = 0.5):
+    n_rot = Angle.from_radians(np.random.normal(0, std_noise_rot))
+    n_trans_x = np.random.normal(0, std_noise_trans)
+    n_trans_y = np.random.normal(0, std_noise_trans)
+
+    return Pose(pose.x + n_trans_x, pose.y + n_trans_y, pose.th + n_rot)
       
   
   def __add__(self, other):
@@ -72,3 +80,36 @@ class Pose(StateVariable):
   
   def __str__(self):
     return f"({self.x}, {self.y}, {self.orientation})"
+  
+  def rt(self, shift_rotation: 'Pose'):
+    # Apply rotation
+    cos_th = shift_rotation.th.cos
+    sin_th = shift_rotation.th.sin
+    x_rotated = self.x * cos_th - self.y * sin_th
+    y_rotated = self.x * sin_th + self.y * cos_th
+
+    # Apply translation
+    x_translated = x_rotated + shift_rotation.x
+    y_translated = y_rotated + shift_rotation.y
+
+    # Apply rotation to the orientation
+    th_translated = self.th + shift_rotation.th
+
+    return Pose(x_translated, y_translated, th_translated)
+
+  def irt(self, shift_rot: 'Pose'):
+    # Apply inverse translation
+    x_translated = self.x - shift_rot.x
+    y_translated = self.y - shift_rot.y
+
+    # Apply inverse rotation
+    cos_th = shift_rot.th.cos
+    sin_th = shift_rot.th.sin
+
+    x_rotated = x_translated * cos_th + y_translated * sin_th
+    y_rotated = -x_translated * sin_th + y_translated * cos_th
+
+    # Apply inverse rotation to the orientation
+    th_rotated = self.th - shift_rot.th
+
+    return Pose(x_rotated, y_rotated, th_rotated)

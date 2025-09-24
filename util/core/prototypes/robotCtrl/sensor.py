@@ -16,6 +16,11 @@ class Sensor(Drawable):
 
         self.updatePosition(robot_pose)
 
+    @staticmethod
+    @abstractmethod
+    def isObjectInDetectorRange(x0: Pose, feature: any):
+       pass
+
     @abstractmethod    
     def getReading(self, m: Map, std_meas_noise: float = 0.5, **kwargs) -> any:
        pass

@@ -4,10 +4,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 
-from ...core import Pose, Map, StateVariable
+from ...core import Pose, Map, StateVariable, Drawable
 from ..sensors.detectedFeature import DetectedFeature
 
-class Landmark(StateVariable):
+class Landmark(StateVariable, Drawable):
     def __init__(self, pose : Pose, signature : int):
         self.pose = pose
         self._signature = signature
@@ -26,6 +26,9 @@ class Landmark(StateVariable):
     
     def __str__(self):
         return f"Landmark: {self.pose}, signature {self.s}"
+    
+    def draw(self, ax, color: str = 'b', **kwargs):
+        ax.scatter(self.pose.x, self.pose.y, color=color, **kwargs)
 
 class LandmarkMap(Map):
     def __init__(self, landmarks: list[Landmark]):
@@ -49,10 +52,10 @@ class LandmarkMap(Map):
     def draw(self, ax: plt.Axes, correspondences: list[int] | None = None, **kwargs):
         if correspondences is not None:
             for c in correspondences:
-                ax.scatter(self.landmarks[c].pose.x, self.landmarks[c].pose.y, color=self.colors[c])
+                self.landmarks[c].draw(ax, color=self.colors[c], **kwargs)
         else: 
             for (landmark, color) in zip(self.landmarks, self.colors):
-                ax.scatter(landmark.pose.x, landmark.pose.y, color=color)
+                landmark.draw(ax, color=color, **kwargs)
 
     def matchFeatures(self, detected_feature: DetectedFeature):
         match = None

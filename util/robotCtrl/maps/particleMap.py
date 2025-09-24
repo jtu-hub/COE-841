@@ -1,3 +1,4 @@
+from ...core import plotGaussian, Pose
 from .landmarkMap import Landmark, LandmarkMap
 
 class LandmarkObservation(Landmark):
@@ -5,6 +6,14 @@ class LandmarkObservation(Landmark):
         super().__init__(pose, signature)
         self.sigma = sigma
         self.credebility = 1
+
+    def draw(self, ax, color = 'b', shift_by: Pose | None = None, **kwargs):
+        if shift_by is not None:
+            pose_eff = self.pose.rt(shift_by)
+        else:
+            pose_eff = self.pose
+
+        plotGaussian(ax, pose_eff.as_array[0:2, :], self.sigma[0:2, 0:2], n_sigmas=3, draw_all_sigma=False, color=color)
 
 class ParticleMap(LandmarkMap):
     def __init__(self, landmarks: list[LandmarkObservation], roi: tuple[tuple[float, float], tuple[float, float]]):

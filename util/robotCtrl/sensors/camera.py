@@ -63,6 +63,15 @@ class CameraSensor(Sensor):
         return None
     
     @staticmethod
+    def isObjectInDetectorRange(x0: Pose, feature: DetectedFeature | Landmark, m: Map, fov: Angle = Angle(60), sensor_range: float = 5):
+        _, c = CameraSensor.getReadingAt(x0, m, fov=fov, sensor_range=sensor_range, detection_noise=False)
+
+        if feature.s in c:
+            return True
+        
+        return False
+    
+    @staticmethod
     def getReadingAt(x0:Pose, m: Map, fov: Angle = Angle(60), sensor_range: float = 5, detection_noise: bool= True, std_meas_noise: float = 0.5, **kwargs) -> any:
         if isinstance(m, LandmarkMap):
             detected_landmarks = []
