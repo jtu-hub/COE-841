@@ -18,6 +18,6 @@ class Particle(Drawable):
             shift_eff = None
             pose_eff = self.pose
 
-        if draw_map: self.map.draw(ax, shift_by=shift_eff)
+        if draw_map: self.map.draw(ax, shift_by=shift_eff,  **kwargs)
 
         ax.scatter(pose_eff.x, pose_eff.y, marker='x', c=color_mu)

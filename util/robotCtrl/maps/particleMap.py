@@ -13,7 +13,7 @@ class LandmarkObservation(Landmark):
         else:
             pose_eff = self.pose
 
-        plotGaussian(ax, pose_eff.as_array[0:2, :], self.sigma[0:2, 0:2], n_sigmas=3, draw_all_sigma=False, color=color)
+        plotGaussian(ax, pose_eff.as_array[0:2, :], self.sigma[0:2, 0:2], color=color, **kwargs)
 
 class ParticleMap(LandmarkMap):
     def __init__(self, landmarks: list[LandmarkObservation], roi: tuple[tuple[float, float], tuple[float, float]]):
@@ -21,16 +21,25 @@ class ParticleMap(LandmarkMap):
         self.roi = roi
 
     def getLandmarkBySignature(self, signature: int):
+        if signature is None: return None
+
         for lm in self.landmarks:
             if lm.s == signature: return lm
 
+        return None
+
     def addLandmark(self, landmark: LandmarkObservation):
         # check if signature is unique
-        for lm in self.landmarks:
-            if landmark.s == lm.s: raise ValueError(f"landmark {landmark} has same signature as existing {lm}")
-        
-        self.landmarks.append(landmark)
-        self.colors = self.generateUniqueColors(len(self.landmarks))
+        try:
+            for i, lm in enumerate(self.landmarks):
+                if landmark.s == lm.s: 
+                    raise RuntimeWarning(f"landmark {landmark} has same signature as existing {lm}")
+            
+            self.landmarks.append(landmark)
+            self.colors = self.generateUniqueColors(len(self.landmarks))
+        except Exception as e:
+            print(e)
+
 
     def removeLandmark(self, landmark: LandmarkObservation):
         self.landmarks.remove(landmark)

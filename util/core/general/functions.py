@@ -5,7 +5,7 @@ from matplotlib.patches import Ellipse
 
 from .angle import Angle
 
-def plotGaussian(ax: plt.Axes, mu: np.array, sigma: np.array, n_sigmas: int, color: str | None = None, label: str | None = None, draw_all_sigma: bool = True, draw_mu: bool = True):
+def plotGaussian(ax: plt.Axes, mu: np.array, sigma: np.array, n_sigmas: int = 3, color: str | None = None, label: str | None = None, draw_all_sigma: bool = True, draw_mu: bool = True, add_legend: bool = True,  **kwargs):
     if mu.shape != (2, 1):
         raise ValueError(f"Wrong dimentison for mu, should be (2, 1) but"
                          f"an array of shape {mu.shape} was provided")
@@ -55,11 +55,11 @@ def plotGaussian(ax: plt.Axes, mu: np.array, sigma: np.array, n_sigmas: int, col
                     color=f"#{'%02x' % int(255 / n_sigmas * (n_sigmas - n))}0000" if color is None else color,
                     fill=False,
                     linestyle='--',
-                    label=f"{n + 1}" + s_label
+                    label=f"{n + 1}" + s_label if add_legend else None
                 )
             )
 
     if draw_mu:
-        ax.scatter(mu_x, mu_y, color="#ff0000" if color is None else color, label=m_label)
+        ax.scatter(mu_x, mu_y, color="#ff0000" if color is None else color, label=m_label if add_legend else None)
 
     ax.legend()
